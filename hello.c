@@ -24,11 +24,34 @@ void setup_uart() {
     // Set baud to ~33.6k (34722)
     TH1 = 253;
     // Timer 1 to mode 2
-    TMOD = 2 << 4;
+    TMOD |= 2 << 4;
     // Necessary?
     TR1 = 1;
     // Set SMOD to 1 for doubled baud rate
     PCON |= 1 << 7;
+}
+
+// XXX: actually seems to be more like 40ms
+void sleep_50us(void)
+{
+    // XXX: assumes 20MHz
+    TMR0 = 20 * 50;
+    TR0 = 1;
+    PCON |= PCON_IDLE;
+}
+
+__sfr __at (0xC4) SFRAL;
+__sfr __at (0xC5) SFRAH;
+__sfr __at (0xC6) SFRFD;
+__sfr __at (0xC7) SFRCN;
+
+char read_flash(short addr)
+{
+    SFRAL = addr & 0xff;
+    SFRAH = addr >> 8;
+    SFRCN = 0;
+    sleep_50us();
+    return SFRFD;
 }
 
 void main(void)
@@ -45,9 +68,9 @@ void main(void)
 
     P1_1 = 0;
     
-    // Setup Timer 0 to wake us up
-    TL0 = 31;
-    TH0 = 0xff;
+    // Setup Timer 0 to wake us up (mode 1)
+    TMOD |= 1;
+    TMR0 = 20 * 1000;
     // Setup interrupts
     ET0 = 1;
     EA = 1;
@@ -62,6 +85,7 @@ void main(void)
     write_byte('3');
 
     for (;;) {
-        PCON |= PCON_IDLE;
+        sleep_50us();
+        P1_3 ^= 1;
     }
 }
