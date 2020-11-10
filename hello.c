@@ -1,6 +1,6 @@
 #include <C8051F000.h>
 
-#define OSC (20 * 1000 * 1000)
+#define OSC_MHZ (20)
 
 void timer0_isr (void) __interrupt (1)
 {
@@ -31,11 +31,9 @@ void setup_uart() {
     PCON |= 1 << 7;
 }
 
-// XXX: actually seems to be more like 40ms
 void sleep_50us(void)
 {
-    // XXX: assumes 20MHz
-    TMR0 = 20 * 50;
+    TMR0 = 65535 - (OSC_MHZ * 50 / 12);
     TR0 = 1;
     PCON |= PCON_IDLE;
 }
@@ -63,8 +61,6 @@ void main(void)
 
     setup_uart();
     write_byte('1');
-    x = read_byte();
-    write_byte(x);
     write_byte('2');
 
     P1_1 = 0;
