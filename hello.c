@@ -21,8 +21,8 @@ void write_byte(char x) {
 void setup_uart() {
     SM1 = 1;
     REN = 1;
-    // Set baud to ~33.6k (34722)
-    TH1 = 253;
+    // Set baud to 9600 (9469)
+    TH1 = 245;
     // Timer 1 to mode 2
     TMOD |= 2 << 4;
     // Necessary?
@@ -57,6 +57,7 @@ char read_flash(short addr)
 void main(void)
 {
     char x;
+    short addr = 0;
 
     P1_0 = 0;
 
@@ -85,7 +86,10 @@ void main(void)
     write_byte('3');
 
     for (;;) {
-        sleep_50us();
+        read_byte();
+        x = read_flash(addr);
+        write_byte(x);
+        addr++;
         P1_3 ^= 1;
     }
 }
