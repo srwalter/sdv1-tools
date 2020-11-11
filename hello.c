@@ -38,10 +38,19 @@ void sleep_50us(void)
     PCON |= PCON_IDLE;
 }
 
+void sleep_15ms(void)
+{
+    TMR0 = 65535 - (15000 / 12 * OSC_MHZ);
+    TR0 = 1;
+    PCON |= PCON_IDLE;
+}
+
 __sfr __at (0xC4) SFRAL;
 __sfr __at (0xC5) SFRAH;
 __sfr __at (0xC6) SFRFD;
 __sfr __at (0xC7) SFRCN;
+__sfr __at (0xBF) CHPCON;
+__sfr __at (0xF6) CHPENR;
 
 char read_flash(short addr)
 {
@@ -50,6 +59,28 @@ char read_flash(short addr)
     SFRCN = 0;
     sleep_50us();
     return SFRFD;
+}
+
+void program_flash(short addr, char val)
+{
+    SFRAL = addr & 0xff;
+    SFRAH = addr >> 8;
+    SFRFD = val;
+    SFRCN = 0x21;
+    sleep_50us();
+}
+
+void erase_flash(void)
+{
+    SFRCN = 0x22;
+    sleep_15ms();
+}
+
+void enable_icsp() {
+    CHPENR = 0x87;
+    CHPENR = 0x59;
+    CHPCON = 0x03;
+    CHPENR = 0x00;
 }
 
 void main(void)
@@ -65,6 +96,9 @@ void main(void)
 
     P1_1 = 0;
     
+    // Needs a transition to idle to take effect
+    enable_icsp();
+
     // Setup Timer 0 to wake us up (mode 1)
     TMOD |= 1;
     TMR0 = 20 * 1000;
@@ -82,10 +116,50 @@ void main(void)
     write_byte('3');
 
     for (;;) {
-        read_byte();
-        x = read_flash(addr);
-        write_byte(x);
-        addr++;
+        x = read_byte();
+        switch (x) {
+            // Read byte from APROM
+            case 1:
+                x = read_flash(addr);
+                write_byte(x);
+                addr++;
+                break;
+
+            // Set addr
+            case 2:
+                x = read_byte();
+                addr = x;
+                x = read_byte();
+                addr |= x << 8;
+                write_byte('K');
+                break;
+
+            // Erase APROM
+            case 3:
+                erase_flash();
+                write_byte('K');
+                break;
+
+            // Program APROM
+            case 4:
+                x = read_byte();
+                program_flash(addr, x);
+                addr++;
+                write_byte('K');
+                break;
+
+            // Exit
+            case 5:
+                CHPENR = 0x87;
+                CHPENR = 0x59;
+                CHPCON = 0x83;
+                write_byte('F');
+                break;
+
+            default:
+                write_byte('?');
+                break;
+        }
         P1_3 ^= 1;
     }
 }
