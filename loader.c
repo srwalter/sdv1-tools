@@ -1,6 +1,6 @@
 #include <C8051F000.h>
 
-#define OSC_MHZ (20)
+#define OSC_MHZ (12)
 
 void timer0_isr (void) __interrupt (1)
 {
@@ -21,8 +21,8 @@ void write_byte(char x) {
 void setup_uart() {
     SM1 = 1;
     REN = 1;
-    // Set baud to 9600 (9469)
-    TH1 = 245;
+    // Set baud to 19200
+    TH1 = 0xfd;
     // Timer 1 to mode 2
     TMOD |= 2 << 4;
     // Necessary?
