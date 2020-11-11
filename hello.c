@@ -56,7 +56,7 @@ char read_flash(short addr)
 {
     SFRAL = addr & 0xff;
     SFRAH = addr >> 8;
-    SFRCN = 0;
+    SFRCN = 1 << 6;
     sleep_50us();
     return SFRFD;
 }
@@ -66,13 +66,13 @@ void program_flash(short addr, char val)
     SFRAL = addr & 0xff;
     SFRAH = addr >> 8;
     SFRFD = val;
-    SFRCN = 0x21;
+    SFRCN = 0x21 | (1 << 6);
     sleep_50us();
 }
 
 void erase_flash(void)
 {
-    SFRCN = 0x22;
+    SFRCN = 0x22 | (1 << 6);
     sleep_15ms();
 }
 
