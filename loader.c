@@ -119,14 +119,14 @@ void main(void)
         x = read_byte();
         switch (x) {
             // Read byte from APROM
-            case 1:
+            case '1':
                 x = read_flash(addr);
                 write_byte(x);
                 addr++;
                 break;
 
             // Set addr
-            case 2:
+            case '2':
                 x = read_byte();
                 addr = x;
                 x = read_byte();
@@ -135,13 +135,13 @@ void main(void)
                 break;
 
             // Erase APROM
-            case 3:
+            case '3':
                 erase_flash();
                 write_byte('K');
                 break;
 
             // Program APROM
-            case 4:
+            case '4':
                 x = read_byte();
                 program_flash(addr, x);
                 addr++;
@@ -149,7 +149,7 @@ void main(void)
                 break;
 
             // Exit
-            case 5:
+            case '5':
                 CHPENR = 0x87;
                 CHPENR = 0x59;
                 CHPCON = 0x83;

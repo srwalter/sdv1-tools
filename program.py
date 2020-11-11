@@ -8,13 +8,13 @@ def program(inp):
     x = serial.Serial("/dev/ttyUSB0", baudrate=115200)
 
     # Set starting address to 0
-    x.write(b'\x02\x00\x00')
+    x.write(b'2\x00\x00')
     result = x.read()
     assert(result == b'K')
 
     # Erase flash
     print("Erasing...")
-    x.write(b'\x03')
+    x.write(b'3')
     result = x.read()
     assert(result == b'K')
 
@@ -23,7 +23,7 @@ def program(inp):
         if val == b'':
             break
 
-        x.write(b'\x04')
+        x.write(b'4')
         x.write(val)
         result = x.read()
         assert(result == b'K')
@@ -33,7 +33,7 @@ def program(inp):
 
     print("Verifying...")
     # Set starting address to 0
-    x.write(b'\x02\x00\x00')
+    x.write(b'2\x00\x00')
     result = x.read()
     assert(result == b'K')
 
@@ -43,7 +43,7 @@ def program(inp):
         expected = inp.read(1)
         if expected == b'':
             break
-        x.write(b'\x01')
+        x.write(b'1')
         actual = x.read();
 
         if expected != actual:
