@@ -1,3 +1,3 @@
 all:
 	sdcc -mmcs51 loader.c
-	sdcc -mmcs51 hello.c
+	sdcc -mmcs51 sdv1.c
