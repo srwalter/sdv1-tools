@@ -113,7 +113,8 @@ int i2c_recv_byte()
     for (i=0; i<8; i++) {
         if (recv_bit())
             val |= 1;
-        val <<= 1;
+        if (i != 7)
+            val <<= 1;
     }
 
     // Send NAK because we only want one byte
