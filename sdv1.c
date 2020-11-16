@@ -215,7 +215,7 @@ void sleep_50us(void)
     PCON |= PCON_IDLE;
 }
 
-char adv7181_setup[][2] = {
+static const char adv7181_setup[][2] = {
     {0x2F,0xB4},
     {0x3A,0x1E},
     {0x2F,0xB4},
@@ -287,6 +287,55 @@ void setup_adv7181(void)
     write_byte('!');
 }
 
+static const char adv7179_setup[][2] = {
+    {0x00,0x10},
+    {0x01,0x10},
+    {0x01,0x10},
+    {0x02,0x06},
+    {0x03,0x08},
+    {0x04,0x13},
+    {0x07,0x00},
+    {0x08,0x00},
+    {0x09,0x1E},
+    {0x0A,0x7C},
+    {0x0B,0xF0},
+    {0x0C,0x21},
+    {0x0D,0x00},
+    {0x0E,0x00},
+    {0x0F,0x00},
+    {0x10,0x00},
+    {0x11,0x00},
+    {0x12,0x00},
+    {0x13,0x00},
+    {0x14,0x00},
+    {0x15,0x00},
+    {0x16,0x00},
+    {0x17,0x00},
+    {0x18,0x00},
+    {0x19,0x00},
+    {0x07,0x00},
+    {0x07,0x80},
+    {0x07,0x00},
+    {0x04,0x53}
+};
+
+void setup_adv7179(void)
+{
+    int i;
+    int nak;
+
+    for (i=0; i<sizeof(adv7179_setup)/sizeof(adv7179_setup[0]); i++) {
+        nak = i2c_send(0x2A, adv7179_setup[i][0], adv7179_setup[i][1]);
+        if (nak) {
+	    return;
+	} else {
+            write_byte('.');
+        }
+    }
+
+    write_byte('!');
+}
+
 void main(void)
 {
     P1_0 = 0;
@@ -321,6 +370,7 @@ void main(void)
     sleep_15ms();
 
     setup_adv7181();
+    setup_adv7179();
 
     P0_1 = 1;
     for (;;) {
