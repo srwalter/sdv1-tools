@@ -6,19 +6,19 @@
 #define RED_LED (P0_0)
 #define GREEN_LED (P0_1)
 
-// For a 40kHz i2c bus, that's about 25ms per cycle.  15ms is close enough for a half cycle
+// XXX: assumes 12MHz clock
+void inline usleep(short x)
+{
+    // Divide by 2, two instructions to decrement and compare
+    x >>= 1;
+    while (x--);
+}
+
+// For a 40kHz i2c bus, that's about 25uS per cycle.  12uS is close enough for a half cycle
 // inline because this function is shorter than 4 push + 4 pop
 void inline sleep_15ms(void)
 {
-    TMR0 = 65535 - (15000 / 12 * OSC_MHZ);
-    TR0 = 1;
-    PCON |= PCON_IDLE;
-}
-
-// XXX: assumes 12MHz clock
-void usleep(char x)
-{
-    while (x--);
+    usleep(12);
 }
 
 void inline i2c_start()
@@ -26,19 +26,19 @@ void inline i2c_start()
     SCL = 1;
     sleep_15ms();
     SCL = 0;
-    usleep(1000);
+    usleep(1);
     SDA = 1;
     sleep_15ms();
     SCL = 1;
-    usleep(1000);
+    usleep(1);
     SDA = 0;
-    usleep(1000);
+    usleep(1);
 }
 
 void inline i2c_stop()
 {
     SCL = 0;
-    usleep(1000);
+    usleep(1);
     SDA = 0;
     sleep_15ms();
 
@@ -46,7 +46,7 @@ void inline i2c_stop()
     // Wait for SCL to rise in case of clock stretching
     while(!SCL);
 
-    usleep(1000);
+    usleep(1);
     SDA = 1;
     sleep_15ms();
 }
@@ -54,7 +54,7 @@ void inline i2c_stop()
 void send_bit(char val)
 {
     SCL = 0;
-    usleep(1000);
+    usleep(1);
     if (val) {
         SDA = 1;
         while(!SDA);
