@@ -7,8 +7,10 @@ def program(addr, subaddr, val=None):
     x = serial.Serial("/dev/ttyUSB0", baudrate=115200)
 
     if val is None:
+        print("Reading")
         x.write(b'r')
     else:
+        print("Writing")
         x.write(b'w')
 
     # Set starting address to 0

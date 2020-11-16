@@ -21,12 +21,18 @@ void usleep(char x)
     while (x--);
 }
 
-// Pre-condition: SCL high
 void inline i2c_start()
 {
+    SCL = 1;
+    sleep_15ms();
+    SCL = 0;
+    usleep(1000);
+    SDA = 1;
+    sleep_15ms();
+    SCL = 1;
+    usleep(1000);
     SDA = 0;
     usleep(1000);
-    SCL = 0;
 }
 
 void inline i2c_stop()
