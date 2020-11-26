@@ -278,6 +278,7 @@ void setup_adv7181(void)
     for (i=0; i<sizeof(adv7181_setup)/sizeof(adv7181_setup[0]); i++) {
         nak = i2c_send(0x21, adv7181_setup[i][0], adv7181_setup[i][1]);
         if (nak) {
+            write_byte('@');
 	    return;
 	} else {
             write_byte('.');
@@ -327,6 +328,45 @@ void setup_adv7179(void)
     for (i=0; i<sizeof(adv7179_setup)/sizeof(adv7179_setup[0]); i++) {
         nak = i2c_send(0x2A, adv7179_setup[i][0], adv7179_setup[i][1]);
         if (nak) {
+            write_byte('@');
+	    return;
+	} else {
+            write_byte('.');
+        }
+    }
+
+    write_byte('!');
+}
+
+static const char final_setup[][3] = {
+    {0x42,0x14,0x12},
+    {0x42,0x2C,0xCE},
+    {0x42,0x00,0x14},
+    {0x42,0xC3,0x06},
+    {0x42,0x3A,0x16},
+    {0x42,0x1D,0x41},
+    {0x42,0x00,0x56},
+    {0x42,0x00,0x54},
+    {0x54,0x04,0x13},
+    {0x54,0x04,0x53},
+    {0x42,0x2C,0xCE},
+    {0x42,0x02,0x04},
+    {0x42,0x08,0x72},
+    {0x42,0x0A,0x00},
+    {0x42,0xE3,0x8C},
+    {0x42,0xE4,0x8C},
+    {0x54,0x04,0x53}
+};
+
+void do_final_setup(void)
+{
+    int i;
+    int nak;
+
+    for (i=0; i<sizeof(final_setup)/sizeof(final_setup[0]); i++) {
+        nak = i2c_send(final_setup[i][0] >> 1, final_setup[i][1], final_setup[i][2]);
+        if (nak) {
+            write_byte('@');
 	    return;
 	} else {
             write_byte('.');
@@ -371,6 +411,7 @@ void main(void)
 
     setup_adv7181();
     setup_adv7179();
+    do_final_setup();
 
     P0_1 = 1;
     for (;;) {
