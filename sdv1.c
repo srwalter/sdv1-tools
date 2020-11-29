@@ -374,6 +374,31 @@ void do_final_setup(void)
     write_byte('!');
 }
 
+static const char svideo_input[][2] = {
+    {0x00, 0x16},
+    {0xc3, 0x41},
+    {0x3a, 0x16},
+    {0x1d, 0x40}
+};
+
+void input_svideo(void)
+{
+    int i;
+    int nak;
+
+    for (i=0; i<sizeof(svideo_input)/sizeof(svideo_input[0]); i++) {
+        nak = i2c_send(0x21, svideo_input[i][0], svideo_input[i][1]);
+        if (nak) {
+            write_byte('@');
+	    return;
+	} else {
+            write_byte('.');
+        }
+    }
+
+    write_byte('!');
+}
+
 void main(void)
 {
     P1_0 = 0;
@@ -410,6 +435,7 @@ void main(void)
     setup_adv7181();
     setup_adv7179();
     do_final_setup();
+    input_svideo();
 
     P0_1 = 1;
     for (;;) {
