@@ -438,11 +438,31 @@ void main(void)
     do_final_setup();
     input_svideo();
 
-    P0_1 = 1;
+    P0_1 = 0;
+    P0_0 = 0;
     for (;;) {
-        P0_0 ^= 1;
         SCL = 1;
         SDA = 1;
+
+        if (!RI) {
+            // No UART data to process, do normal stuff
+            val = i2c_recv(0x21, 0x10);
+            if (val & 1) {
+                // Got a lock
+                if (val & 0x60) {
+                    // PAL
+                    P0_0 = 1;
+                    i2c_send(0x2a, 0, 0x11);
+                } else {
+                    // NTSC
+                    P0_1 = 1;
+                }
+            }
+
+            sleep_max();
+            continue;
+        }
+
         val = read_byte();
         switch (val) {
             case 'r':
