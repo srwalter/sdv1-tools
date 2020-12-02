@@ -400,6 +400,31 @@ void input_svideo(void)
     write_byte('!');
 }
 
+static const char cvbs_input[][2] = {
+    {0x00, 0x14},
+    {0xc3, 0x06},
+    {0x3a, 0x16},
+    {0x1d, 0x41}
+};
+
+void input_cvbs(void)
+{
+    int i;
+    int nak;
+
+    for (i=0; i<sizeof(cvbs_input)/sizeof(cvbs_input[0]); i++) {
+        nak = i2c_send(0x21, cvbs_input[i][0], cvbs_input[i][1]);
+        if (nak) {
+            write_byte('@');
+	    return;
+	} else {
+            write_byte('.');
+        }
+    }
+
+    write_byte('!');
+}
+
 void main(void)
 {
     P1_0 = 0;
