@@ -16,7 +16,7 @@ void inline usleep(short x)
 
 // For a 40kHz i2c bus, that's about 25uS per cycle.  12uS is close enough for a half cycle
 // inline because this function is shorter than 4 push + 4 pop
-void inline sleep_15ms(void)
+void inline sleep_half_cycle(void)
 {
     usleep(12);
 }
@@ -24,11 +24,11 @@ void inline sleep_15ms(void)
 void inline i2c_start()
 {
     SCL = 1;
-    sleep_15ms();
+    sleep_half_cycle();
     SCL = 0;
     usleep(1);
     SDA = 1;
-    sleep_15ms();
+    sleep_half_cycle();
     SCL = 1;
     usleep(1);
     SDA = 0;
@@ -40,7 +40,7 @@ void inline i2c_stop()
     SCL = 0;
     usleep(1);
     SDA = 0;
-    sleep_15ms();
+    sleep_half_cycle();
 
     SCL = 1;
     // Wait for SCL to rise in case of clock stretching
@@ -48,7 +48,7 @@ void inline i2c_stop()
 
     usleep(1);
     SDA = 1;
-    sleep_15ms();
+    sleep_half_cycle();
 }
 
 void send_bit(char val)
@@ -63,9 +63,9 @@ void send_bit(char val)
         while(SDA);
     }
 
-    sleep_15ms();
+    sleep_half_cycle();
     SCL = 1;
-    sleep_15ms();
+    sleep_half_cycle();
     // Wait for SCL to rise in case of clock stretching
     while(!SCL);
     SCL = 0;
@@ -78,7 +78,7 @@ char recv_bit()
     SCL = 0;
     // Let SDA float so the slave can drive ACK/NAK
     SDA = 1;
-    sleep_15ms();
+    sleep_half_cycle();
     SCL = 1;
     // Wait for SCL to rise in case of clock stretching
     while(!SCL);
@@ -86,7 +86,7 @@ char recv_bit()
         val = 1;
     else
         val = 0;
-    sleep_15ms();
+    sleep_half_cycle();
     return val;
 }
 
@@ -119,7 +119,7 @@ int i2c_recv_byte()
 
     // Send NAK because we only want one byte
     SCL = 0;
-    sleep_15ms();
+    sleep_half_cycle();
     send_bit(1);
     i2c_stop();
 
@@ -457,7 +457,7 @@ void main(void)
 
     SCL = 1;
     SDA = 1;
-    sleep_15ms();
+    sleep_half_cycle();
 
     setup_adv7181();
     setup_adv7179();
