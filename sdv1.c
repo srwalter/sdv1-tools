@@ -208,9 +208,9 @@ void sleep_max(void)
     PCON |= PCON_IDLE;
 }
 
-void sleep_50us(void)
+void timer_usleep(int x)
 {
-    TMR0 = 65535 - (OSC_MHZ * 50 / 12);
+    TMR0 = 65535 - (OSC_MHZ * x / 12);
     TR0 = 1;
     PCON |= PCON_IDLE;
 }
