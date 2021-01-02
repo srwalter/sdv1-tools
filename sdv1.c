@@ -5,8 +5,8 @@
 #define SCL (P1_0)
 #define RED_LED (P0_0)
 #define GREEN_LED (P0_1)
-#define SWITCH (P0_3)
-#define BUTTON (P2_0)
+#define SWITCH (P1_5)
+#define BUTTON (P2_7)
 
 // XXX: assumes 12MHz clock
 void inline usleep(short x)
