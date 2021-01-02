@@ -5,6 +5,8 @@
 #define SCL (P1_0)
 #define RED_LED (P0_0)
 #define GREEN_LED (P0_1)
+#define SWITCH (P0_3)
+#define BUTTON (P2_0)
 
 // XXX: assumes 12MHz clock
 void inline usleep(short x)
@@ -555,6 +557,7 @@ void main(void)
     P1_2 = 0;
     write_byte('3');
 
+reset:
     SCL = 1;
     SDA = 1;
     sleep_half_cycle();
@@ -569,6 +572,12 @@ void main(void)
     for (;;) {
         SCL = 1;
         SDA = 1;
+
+        if (!BUTTON) {
+            // Reset all the things
+            locked = 0;
+            goto reset;
+        }
 
         if (!RI) {
             // No UART data to process, do normal stuff
