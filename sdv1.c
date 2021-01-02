@@ -444,7 +444,9 @@ static const char final_setup[][3] = {
     // SD Saturation Cb
     {0x42,0xE3,0x8C},
     // SD Saturation Cr
-    {0x42,0xE4,0x8C}
+    {0x42,0xE4,0x8C},
+    // Mode Register 4, sleep mode enable
+    {0x54,0x04,0x53}
 };
 
 void do_final_setup(void)
@@ -575,6 +577,10 @@ void main(void)
                 if (val & 1) {
                     // Got a lock
                     locked = 1;
+
+                    // Mode Register 4, disable sleep mode
+                    i2c_send(0x2a, 4, 0x13);
+
                     if (val & 0x60) {
                         // PAL
                         P0_0 = 1;
