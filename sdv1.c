@@ -216,36 +216,67 @@ void timer_usleep(int x)
 }
 
 static const char adv7181_setup[][2] = {
+    // Luma Gain Control 1
     {0x2F,0xB4},
+    // ADC Control, power down all ADCs
     {0x3A,0x1E},
+    // Luma Gain Control 1
     {0x2F,0xB4},
+    // Contrast
     {0x08,0x80},
+    // AGC Mode Control, enable LAGC.1 and CAGC.1
     {0x2C,0xAE},
+    // Misc Gain Control
     {0x2B,0xF2},
+    // Reserved...
     {0xD2,0x01},
+    // Reserved...
     {0xD3,0x01},
+    // Reserved...
     {0xDB,0x9B},
+    // Reserved...
     {0x2C,0xFE},
+    // Reserved...
     {0x02,0x04},
+    // Video Selection, Enable VSync and HSync processing
     {0x01,0xC8},
+    // Output Control, 8-bit @ LLC1 4:2:2 ITU-R BT.656 
     {0x03,0x8C},
+    // Analog Clamp Control, Current clamp enable (default)
     {0x14,0x12},
+    // Digital Clamp Control 1, digital clamp timing slow
     {0x15,0x00},
+    // Shaping Filter Control, C shaping SH3, auto narrow notch for Y
     {0x17,0x41},
+    // VS and Field Control 1, default
     {0x31,0x12},
+    // CTI DNR Control 2, 
     {0x50,0x04},
+    // Lock Count, 100 lines in-lock, 100 lines out-of-lock, lock set only by horizonal lock
     {0x51,0x24},
+    // ADC Switch 2, enable manual input signal muxing, no-connect ADC2
     {0xC4,0x80},
+    // ADC Switch 1, no-connect ADC0/1
     {0xC3,0x06},
+    // ADC Controll, power up ADC0
     {0x3A,0x16},
+    // Extended Output Control, default except enable SPL pin
     {0x04,0x57},
+    // Pixel Delay Control, no delay, auto align
     {0x27,0x58},
+    // Hue, default no adjust
     {0x0B,0x00},
+    // Manual Window, default except reserved bit 7 is set
     {0x3D,0xC3},
+    // Reserved
     {0x3F,0xE4},
+    // Reserved
     {0xB3,0xFE},
+    // Power Management, default except reserved bit 6 is set
     {0x0F,0x40},
+    // ADI Control, default except reserved bit 7 is set
     {0x0E,0x85},
+    // CVBS input example from Datasheet
     {0x89,0x0D},
     {0x8D,0x9B},
     {0x8F,0x48},
@@ -255,18 +286,32 @@ static const char adv7181_setup[][2] = {
     {0xE2,0xAF},
     {0xE8,0xF3},
     {0x0E,0x05},
+    // End example
+    // Extended Output Control, enable ITU-R BT656-3/4 compatibility
     {0x04,0xD7},
+    // Reserved (saturation)
     {0x09,0x80},
+    // Resample Control, set SFL compatible to 719x series
     {0x41,0x10},
+    // SD Saturation Cb (differs from datasheet example)
     {0xE3,0x80},
+    // SD Saturation Cr (differs from datasheet examle)
     {0xE4,0x80},
+    // NTSC V Bit End
     {0xE6,0x11},
+    // Default Y Value, Disable free run mode, default Y to black
     {0x0C,0x00},
+    // Default C value, 
     {0x0D,0x88},
+    // ADI Control, default except reserved bit 7 set
     {0x0E,0x85},
+    // Reserved
     {0x52,0x00},
+    // Reserved
     {0x86,0x02},
+    // ADC Control, default
     {0x0E,0x05},
+    // Hue, no adjust
     {0x0B,0x00}
 };
 
@@ -289,33 +334,61 @@ void setup_adv7181(void)
 }
 
 static const char adv7179_setup[][2] = {
+    // Mode Register 0, 1.3MHz low pass, Extended Mode, NTSC
     {0x00,0x10},
+    // Mode Register 1, Power up DAC's, no CC, interlaced
     {0x01,0x10},
+    // Duplicate
     {0x01,0x10},
+    // Mode Register 2, disable square pixels, enable RTC pin, 
     {0x02,0x06},
+    // Mode Register 3, DAC output Y/Pb/Pr
     {0x03,0x08},
+    // Mode Register 4, Y/Pb/Pr output, pedestal on
     {0x04,0x13},
+    // Timing Mode Register 0, slave timing, mode 0, blank output enable, no delay
     {0x07,0x00},
+    // Timing Mode Register 1, 
     {0x08,0x00},
+    // Subcarrier Frequency 0, as per datasheet
     {0x09,0x1E},
+    // Subcarrier Frequency 1, as per datasheet
     {0x0A,0x7C},
+    // Subcarrier Frequency 2, as per datasheet
     {0x0B,0xF0},
+    // Subcarrier Frequency 3, as per datasheet
     {0x0C,0x21},
+    // Subcarrier Phase Register, 0 = normal operation
     {0x0D,0x00},
+    // CC Even Field
     {0x0E,0x00},
+    // CC Even Field
     {0x0F,0x00},
+    // CC Odd Field
     {0x10,0x00},
+    // CC Odd Field
     {0x11,0x00},
+    // NTSC Pedestal Control
     {0x12,0x00},
+    // NTSC Pedestal Control
     {0x13,0x00},
+    // NTSC Pedestal Control
     {0x14,0x00},
+    // NTSC Pedestal Control
     {0x15,0x00},
+    // CGMS_WSS Register 0
     {0x16,0x00},
+    // CGMS_WSS Register 1
     {0x17,0x00},
+    // CGMS_WSS Register 2
     {0x18,0x00},
+    // Teletext Request Control Register
     {0x19,0x00},
+    // Timing Register Reset Sequence
     {0x07,0x00},
+    // Timing Register Reset Sequence
     {0x07,0x80},
+    // Timing Register Reset Sequence
     {0x07,0x00}
 };
 
@@ -338,22 +411,39 @@ void setup_adv7179(void)
 }
 
 static const char final_setup[][3] = {
-    {0x42,0x07,0x3F}, // Disable SECAM detection, interferes with PAL C64
+    // Autodetect Enable, Disable SECAM detection, interferes with PAL C64
+    {0x42,0x07,0x3F},
+    // Analog Clamp Control, defaults
     {0x42,0x14,0x12},
+    // AGC Mode Control, AGC auto override through white peak, Auto IRE, Automatic Gain
     {0x42,0x2C,0xCE},
+    // Input Control, Auto-detect NTSC with pedestal
     {0x42,0x00,0x14},
+    // ADC Switch 1, ADC0/1 no-connect
     {0x42,0xC3,0x06},
+    // ADC Control, power up ADC 0
     {0x42,0x3A,0x16},
+    // Reserved
     {0x42,0x1D,0x41},
+    // Input Control, S-Video input, NTSC(M)
     {0x42,0x00,0x56},
+    // Input Control, NTSC(M), lower nibble invalid?
     {0x42,0x00,0x54},
+    // Mode Register 4, Y/Pb/Pr output, pedetal on
     {0x54,0x04,0x13},
+    // Timing Mode Register 0, disable blank input control
     {0x54,0x07,0x08},
+    // AGC Mode Control, AGC auto override through white peak, Auto IRE, Automatic Gain
     {0x42,0x2C,0xCE},
+    // Reserved
     {0x42,0x02,0x04},
+    // Contrast
     {0x42,0x08,0x72},
+    // Brightness
     {0x42,0x0A,0x00},
+    // SD Saturation Cb
     {0x42,0xE3,0x8C},
+    // SD Saturation Cr
     {0x42,0xE4,0x8C}
 };
 
@@ -376,9 +466,13 @@ void do_final_setup(void)
 }
 
 static const char svideo_input[][2] = {
+    // Input Control, S-Video
     {0x00, 0x16},
+    // ADC Switch 1, ADC0 to AIN2, ADC1 to AIN4
     {0xc3, 0x41},
+    // ADC Control, power up ADC0 and ADC1
     {0x3a, 0x12},
+    // Reserved
     {0x1d, 0x40}
 };
 
@@ -401,9 +495,13 @@ void input_svideo(void)
 }
 
 static const char cvbs_input[][2] = {
+    // Input Control, doesn't make sense per spec (XXX)
     {0x00, 0x14},
+    // ADC Switch 1, ADC 0/1 no-connect (XXX)
     {0xc3, 0x06},
+    // ADC Control, power up ADC 0
     {0x3a, 0x16},
+    // Reserved
     {0x1d, 0x41}
 };
 
@@ -480,6 +578,7 @@ void main(void)
                     if (val & 0x60) {
                         // PAL
                         P0_0 = 1;
+                        // Mode Register 0, extended mode, PAL B/D/G/H/I
                         i2c_send(0x2a, 0, 0x11);
                     } else {
                         // NTSC
