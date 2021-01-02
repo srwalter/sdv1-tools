@@ -565,7 +565,11 @@ reset:
     setup_adv7181();
     setup_adv7179();
     do_final_setup();
-    input_svideo();
+    if (SWITCH) {
+        input_cvbs();
+    } else {
+        input_svideo();
+    }
 
     P0_1 = 0;
     P0_0 = 0;
